@@ -64,7 +64,7 @@ def get_qdrant():
         embedding=embedding_model,
         collection_name="COMSATS Embeddings - VectorStore",
         url="https://f6c816ad-c10a-4487-9692-88d5ee23882a.europe-west3-0.gcp.cloud.qdrant.io:6333",
-        api_key = qdrant_api_key,
+        api_key = QDRANT_API_KEY,
     )
     return qdrant
 
