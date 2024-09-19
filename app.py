@@ -10,12 +10,12 @@ import os
 
 def main():
     load_dotenv()  # Load environment variables from .env file
-    os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
-    os.environ["QDRANT_API_KEY"] = os.getenv("QDRANT_API_KEY")
+    OPENAI_API_KEY = st.secrets["OPENAI_API_KEY"]
+    QDRANT_API_KEY = st.secrets["QDRANT_API_KEY"]
     
     # Streamlit Page Configuration
-    page_icon = "images/comsats icon.jpg"
-    image = "images/comsats.png"
+    page_icon = "comsats icon.jpg"
+    image = "comsats.png"
     st.set_page_config(page_title="COMSATS", page_icon=page_icon, layout="wide")
     
     # Create columns for layout
@@ -64,7 +64,7 @@ def get_qdrant():
         embedding=embedding_model,
         collection_name="COMSATS Embeddings - VectorStore",
         url="https://f6c816ad-c10a-4487-9692-88d5ee23882a.europe-west3-0.gcp.cloud.qdrant.io:6333",
-        api_key=os.getenv("QDRANT_API_KEY")
+        api_key = qdrant_api_key,
     )
     return qdrant
 
@@ -73,7 +73,8 @@ def generate_response(retriever, query_text):
         model="gpt-4o-mini",
         temperature=0.5,
         max_tokens=1024,
-        max_retries=2
+        max_retries=2,
+        openai_api_key=openai_api_key
     )
 
     template = """Use the following content of Comsats University Islamabad to answer the question at the end. Go through the content and look for the answers.
