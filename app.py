@@ -7,11 +7,10 @@ from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
 import os
-
+OPENAI_API_KEY = st.secrets["OPENAI_API_KEY"]
+QDRANT_API_KEY = st.secrets["QDRANT_API_KEY"]
 def main():
     load_dotenv()  # Load environment variables from .env file
-    OPENAI_API_KEY = st.secrets["OPENAI_API_KEY"]
-    QDRANT_API_KEY = st.secrets["QDRANT_API_KEY"]
     
     # Streamlit Page Configuration
     page_icon = "comsats icon.jpg"
