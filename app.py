@@ -73,7 +73,7 @@ def generate_response(retriever, query_text):
         temperature=0.5,
         max_tokens=1024,
         max_retries=2,
-        openai_api_key=openai_api_key
+        openai_api_key=OPENAI_API_KEY
     )
 
     template = """Use the following content of Comsats University Islamabad to answer the question at the end. Go through the content and look for the answers.
