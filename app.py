@@ -45,12 +45,51 @@ def main():
         # Add user's message to chat and display it
         st.chat_message("user").markdown(query_text)
         st.session_state.chat_history.append({"role": "user", "content": query_text})
-        
+
+        re_write_llm = ChatOpenAI(
+            model = "gpt-4o-mini",
+            temperature = 0,
+            max_tokens = 4000
+        )
+        # Create a prompt template for query rewriting
+        query_rewrite_template = """
+        You are an AI assistant in a Retrieval-Augmented Generation (RAG) system. Your task is to :
+        1- add full form of words such that if the  original query contains "BSCS", just add "Bachelor of Science in Computer Science (BSCS)" along with its short form "BSCS".
+
+
+        Original query: {original_query}
+
+        Rewritten query:
+        """
+        query_rewrite_prompt = PromptTemplate(
+            input_varibales = ["original_query"],
+            template = query_rewrite_template
+        )
+
+        # create an LLMChain for query rewriting
+        query_rewriter = query_rewrite_prompt | re_write_llm
+
+        def rewrite_query(original_query):
+          """
+          Rewrite the original query to improve retrieval.
+
+          Args:
+          original_query (str): The original user query
+
+          Returns:
+          str: The rewritten query
+          """
+          response = query_rewriter.invoke(original_query)
+          return response.content
+
+        # new query
+        rewritten_query = rewrite_query(query_text)
+
         # Generate response from the model
         with st.spinner('Thinking...'):
             try:
                 retriever = st.session_state.qdrant.as_retriever()
-                response = generate_response(retriever, query_text)
+                response = generate_response(retriever, rewritten_query)
                 st.session_state.chat_history.append({"role": "assistant", "content": response})
                 with st.chat_message("assistant"):
                     st.markdown(response)
@@ -77,7 +116,7 @@ def generate_response(retriever, query_text):
     )
 
     template = """Use the following content of Comsats University Islamabad to answer the question at the end. Go through the content and look for the answers.
-    If you don't find relevant information in the content, just ask the user to ask relevant questions.!, Don't try to make up an answer.
+    If you don't find relevant information in the content, just ask the user to ask relevant questions!, Don't try to make up an answer.
     Give the answer in detail. Note that you can reply to greetings!
 
     {context}
